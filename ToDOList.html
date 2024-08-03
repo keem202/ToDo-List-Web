@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO-DO List</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TO-DO List</h1>
+        <div class="theme-switch">
+            <label>
+                <input type="checkbox" id="theme-toggle">
+                Dark Mode
+            </label>
+        </div>
+        <div class="todo-input">
+            <input type="text" id="new-task" placeholder="Add a new task">
+            <button id="add-task">Add</button>
+        </div>
+        <div class="search-filter">
+            <input type="text" id="search-task" placeholder="Search tasks">
+            <select id="filter-tasks">
+                <option value="all">All</option>
+                <option value="completed">Completed</option>
+                <option value="uncompleted">Uncompleted</option>
+            </select>
+        </div>
+        <ul id="task-list"></ul>
+    </div>
+
+    <div id="popup" class="hidden">
+        <div class="popup-content">
+            <input type="text" id="edit-task" placeholder="Edit task">
+            <button id="apply-edit">Apply</button>
+            <button id="cancel-edit">Cancel</button>
+        </div>
+    </div>
+
+    <script src="Script.js"></script>
+</body>
+</html>
