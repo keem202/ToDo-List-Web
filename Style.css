@@ -89,6 +89,7 @@ li {
     justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid #ddd;
+    align-items: center;
 }
 
 body.dark-mode li {
@@ -101,6 +102,28 @@ li.completed {
 
 .hidden {
     display: none;
+}
+
+/* Task styling */
+.task-text {
+    flex-grow: 1;
+    padding-right: 10px;
+}
+
+.task-category {
+    font-size: 0.9em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    color: #fff;
+    margin-right: 10px; 
+}
+
+.task-category.work {
+    background-color: #5c85d6;
+}
+
+.task-category.home {
+    background-color: #ff7f50;
 }
 
 /* Popup styling */

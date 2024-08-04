@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('task-list');
     const newTaskInput = document.getElementById('new-task');
+    const taskCategorySelect = document.getElementById('task-category');
     const addTaskButton = document.getElementById('add-task');
     const searchTaskInput = document.getElementById('search-task');
     const filterTasksSelect = document.getElementById('filter-tasks');
@@ -28,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <input type="checkbox" ${task.completed ? 'checked' : ''}>
-                <span>${task.text}</span>
+                <span class="task-text">${task.text}</span>
+                <span class="task-category ${task.category.toLowerCase()}">${task.category}</span>
                 <div class="actions">
                     <button class="edit">Edit</button>
                     <button class="delete">Delete</button>
@@ -62,8 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addTaskButton.addEventListener('click', () => {
         const text = newTaskInput.value.trim();
+        const category = taskCategorySelect.value;
         if (text) {
-            tasks.push({ id: Date.now(), text, completed: false });
+            tasks.push({ id: Date.now(), text, category, completed: false });
             newTaskInput.value = '';
             saveTasks();
             renderTasks(tasks);
@@ -99,6 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
             filteredTasks = tasks.filter(task => task.completed);
         } else if (filter === 'uncompleted') {
             filteredTasks = tasks.filter(task => !task.completed);
+        } else if (filter === 'work') {
+            filteredTasks = tasks.filter(task => task.category === 'Work');
+        } else if (filter === 'home') {
+            filteredTasks = tasks.filter(task => task.category === 'Home');
         }
 
         renderTasks(filteredTasks);
