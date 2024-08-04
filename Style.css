@@ -35,20 +35,20 @@ h1 {
     text-align: center;
 }
 
-.todo-input, .search-filter {
+.todo-input, .search-filter, .category-input {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
 }
 
-#new-task, #search-task {
+#new-task, #search-task, #new-category {
     width: calc(100% - 70px);
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-body.dark-mode #new-task, body.dark-mode #search-task {
+body.dark-mode #new-task, body.dark-mode #search-task, body.dark-mode #new-category {
     background: #666;
     color: #fff;
     border: 1px solid #888;
@@ -116,14 +116,6 @@ li.completed {
     border-radius: 3px;
     color: #fff;
     margin-right: 10px; 
-}
-
-.task-category.work {
-    background-color: #5c85d6;
-}
-
-.task-category.home {
-    background-color: #ff7f50;
 }
 
 /* Popup styling */

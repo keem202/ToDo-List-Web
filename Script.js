@@ -3,8 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const newTaskInput = document.getElementById('new-task');
     const taskCategorySelect = document.getElementById('task-category');
     const addTaskButton = document.getElementById('add-task');
+    const newCategoryInput = document.getElementById('new-category');
+    const newCategoryColorInput = document.getElementById('new-category-color');
+    const addCategoryButton = document.getElementById('add-category');
     const searchTaskInput = document.getElementById('search-task');
-    const filterTasksSelect = document.getElementById('filter-tasks');
+    const statusFilterSelect = document.getElementById('status-filter');
+    const categoryFilterSelect = document.getElementById('category-filter');
     const themeToggle = document.getElementById('theme-toggle');
     const popup = document.getElementById('popup');
     const editTaskInput = document.getElementById('edit-task');
@@ -20,8 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load tasks from local storage
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let categories = JSON.parse(localStorage.getItem('categories')) || [
+        { name: 'Work', color: '#5c85d6' },
+        { name: 'Home', color: '#ff7f50' }
+    ];
     let editTaskId = null;
     let deleteTaskId = null;
+
+    const saveTasks = () => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    };
+
+    const saveCategories = () => {
+        localStorage.setItem('categories', JSON.stringify(categories));
+    };
 
     const renderTasks = (tasksToRender) => {
         taskList.innerHTML = '';
@@ -30,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.innerHTML = `
                 <input type="checkbox" ${task.completed ? 'checked' : ''}>
                 <span class="task-text">${task.text}</span>
-                <span class="task-category ${task.category.toLowerCase()}">${task.category}</span>
+                <span class="task-category" style="background-color: ${task.color}">${task.category}</span>
                 <div class="actions">
                     <button class="edit">Edit</button>
                     <button class="delete">Delete</button>
@@ -42,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.querySelector('input[type="checkbox"]').addEventListener('change', () => {
                 task.completed = !task.completed;
                 saveTasks();
-                renderTasks(tasks);
+                filterAndRenderTasks();
             });
 
             li.querySelector('.edit').addEventListener('click', () => {
@@ -58,18 +74,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const saveTasks = () => {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+    const filterAndRenderTasks = () => {
+        const searchQuery = searchTaskInput.value.toLowerCase();
+        const statusFilter = statusFilterSelect.value;
+        const categoryFilter = categoryFilterSelect.value;
+
+        let filteredTasks = tasks.filter(task => task.text.toLowerCase().includes(searchQuery));
+
+        if (statusFilter !== 'all') {
+            filteredTasks = filteredTasks.filter(task => statusFilter === 'completed' ? task.completed : !task.completed);
+        }
+
+        if (categoryFilter !== 'all') {
+            filteredTasks = filteredTasks.filter(task => task.category.toLowerCase() === categoryFilter);
+        }
+
+        renderTasks(filteredTasks);
+    };
+
+    const populateCategorySelects = () => {
+        taskCategorySelect.innerHTML = '';
+        categoryFilterSelect.innerHTML = '<option value="all">All</option>';
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.name;
+            option.textContent = category.name;
+            option.dataset.color = category.color;
+            taskCategorySelect.appendChild(option);
+
+            const filterOption = document.createElement('option');
+            filterOption.value = category.name.toLowerCase();
+            filterOption.textContent = category.name;
+            categoryFilterSelect.appendChild(filterOption);
+        });
     };
 
     addTaskButton.addEventListener('click', () => {
         const text = newTaskInput.value.trim();
         const category = taskCategorySelect.value;
+        const color = taskCategorySelect.selectedOptions[0].dataset.color;
         if (text) {
-            tasks.push({ id: Date.now(), text, category, completed: false });
+            tasks.push({ id: Date.now(), text, category, color, completed: false });
             newTaskInput.value = '';
             saveTasks();
-            renderTasks(tasks);
+            filterAndRenderTasks();
+        }
+    });
+
+    addCategoryButton.addEventListener('click', () => {
+        const name = newCategoryInput.value.trim();
+        const color = newCategoryColorInput.value;
+        if (name && color) {
+            categories.push({ name, color });
+            newCategoryInput.value = '';
+            newCategoryColorInput.value = '#000000';
+            saveCategories();
+            populateCategorySelects();
         }
     });
 
@@ -80,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = tasks.find(t => t.id === editTaskId);
         task.text = text;
         saveTasks();
-        renderTasks(tasks);
+        filterAndRenderTasks();
         popup.classList.remove('show');
     });
 
@@ -88,28 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         popup.classList.remove('show');
     });
 
-    searchTaskInput.addEventListener('input', () => {
-        const query = searchTaskInput.value.toLowerCase();
-        const filteredTasks = tasks.filter(task => task.text.toLowerCase().includes(query));
-        renderTasks(filteredTasks);
-    });
-
-    filterTasksSelect.addEventListener('change', () => {
-        const filter = filterTasksSelect.value;
-        let filteredTasks = tasks;
-
-        if (filter === 'completed') {
-            filteredTasks = tasks.filter(task => task.completed);
-        } else if (filter === 'uncompleted') {
-            filteredTasks = tasks.filter(task => !task.completed);
-        } else if (filter === 'work') {
-            filteredTasks = tasks.filter(task => task.category === 'Work');
-        } else if (filter === 'home') {
-            filteredTasks = tasks.filter(task => task.category === 'Home');
-        }
-
-        renderTasks(filteredTasks);
-    });
+    searchTaskInput.addEventListener('input', filterAndRenderTasks);
+    statusFilterSelect.addEventListener('change', filterAndRenderTasks);
+    categoryFilterSelect.addEventListener('change', filterAndRenderTasks);
 
     themeToggle.addEventListener('change', () => {
         document.body.classList.toggle('dark-mode', themeToggle.checked);
@@ -133,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmDeleteButton.addEventListener('click', () => {
         tasks = tasks.filter(task => task.id !== deleteTaskId);
         saveTasks();
-        renderTasks(tasks);
+        filterAndRenderTasks();
         deletePopup.classList.remove('show');
     });
 
@@ -141,5 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         deletePopup.classList.remove('show');
     });
 
-    renderTasks(tasks);
+    populateCategorySelects();
+    filterAndRenderTasks();
 });

@@ -18,17 +18,25 @@
         <div class="todo-input">
             <input type="text" id="new-task" placeholder="Add a new task">
             <select id="task-category">
-                <option value="Work">Work</option>
-                <option value="Home">Home</option>
+                <option value="Work" data-color="#5c85d6">Work</option>
+                <option value="Home" data-color="#ff7f50">Home</option>
             </select>
             <button id="add-task">Add</button>
         </div>
+        <div class="category-input">
+            <input type="text" id="new-category" placeholder="New category name">
+            <input type="color" id="new-category-color">
+            <button id="add-category">Add Category</button>
+        </div>
         <div class="search-filter">
             <input type="text" id="search-task" placeholder="Search tasks">
-            <select id="filter-tasks">
+            <select id="status-filter">
                 <option value="all">All</option>
                 <option value="completed">Completed</option>
                 <option value="uncompleted">Uncompleted</option>
+            </select>
+            <select id="category-filter">
+                <option value="all">All</option>
                 <option value="work">Work</option>
                 <option value="home">Home</option>
             </select>
