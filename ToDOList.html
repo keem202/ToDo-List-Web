@@ -28,6 +28,7 @@
             </select>
         </div>
         <ul id="task-list"></ul>
+        <button id="clear-all">Clear All</button>
     </div>
 
     <div id="popup" class="hidden">
@@ -35,6 +36,22 @@
             <input type="text" id="edit-task" placeholder="Edit task">
             <button id="apply-edit">Apply</button>
             <button id="cancel-edit">Cancel</button>
+        </div>
+    </div>
+
+    <div id="clear-popup" class="hidden">
+        <div class="popup-content">
+            <p>Are you sure you want to clear all tasks?</p>
+            <button id="confirm-clear">Yes</button>
+            <button id="cancel-clear">No</button>
+        </div>
+    </div>
+
+    <div id="delete-popup" class="hidden">
+        <div class="popup-content">
+            <p>Are you sure you want to delete this task?</p>
+            <button id="confirm-delete">Yes</button>
+            <button id="cancel-delete">No</button>
         </div>
     </div>
 

@@ -54,6 +54,10 @@ body.dark-mode #new-task, body.dark-mode #search-task {
     border: 1px solid #888;
 }
 
+body.dark-mode ::placeholder {
+    color: #f4f4f4;
+}
+
 button {
     padding: 10px;
     border: none;
@@ -100,7 +104,7 @@ li.completed {
 }
 
 /* Popup styling */
-#popup {
+#popup, #clear-popup, #delete-popup {
     position: fixed;
     top: 0;
     left: 0;
@@ -112,7 +116,7 @@ li.completed {
     align-items: center;
 }
 
-#popup.show {
+#popup.show, #clear-popup.show, #delete-popup.show {
     display: flex;
 }
 

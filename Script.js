@@ -9,10 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const editTaskInput = document.getElementById('edit-task');
     const applyEditButton = document.getElementById('apply-edit');
     const cancelEditButton = document.getElementById('cancel-edit');
+    const clearAllButton = document.getElementById('clear-all');
+    const clearPopup = document.getElementById('clear-popup');
+    const confirmClearButton = document.getElementById('confirm-clear');
+    const cancelClearButton = document.getElementById('cancel-clear');
+    const deletePopup = document.getElementById('delete-popup');
+    const confirmDeleteButton = document.getElementById('confirm-delete');
+    const cancelDeleteButton = document.getElementById('cancel-delete');
 
     // Load tasks from local storage
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     let editTaskId = null;
+    let deleteTaskId = null;
 
     const renderTasks = (tasksToRender) => {
         taskList.innerHTML = '';
@@ -42,9 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             li.querySelector('.delete').addEventListener('click', () => {
-                tasks = tasks.filter(t => t.id !== task.id);
-                saveTasks();
-                renderTasks(tasks);
+                deleteTaskId = task.id;
+                deletePopup.classList.add('show');
             });
         });
     };
@@ -65,13 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyEditButton.addEventListener('click', () => {
         const text = editTaskInput.value.trim();
-        if (text) {
-            const task = tasks.find(t => t.id === editTaskId);
-            task.text = text;
-            saveTasks();
-            renderTasks(tasks);
-            popup.classList.remove('show');
-        }
+        if (!text) return;
+
+        const task = tasks.find(t => t.id === editTaskId);
+        task.text = text;
+        saveTasks();
+        renderTasks(tasks);
+        popup.classList.remove('show');
     });
 
     cancelEditButton.addEventListener('click', () => {
@@ -79,32 +86,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     searchTaskInput.addEventListener('input', () => {
-        const query = searchTaskInput.value.trim().toLowerCase();
+        const query = searchTaskInput.value.toLowerCase();
         const filteredTasks = tasks.filter(task => task.text.toLowerCase().includes(query));
         renderTasks(filteredTasks);
     });
 
     filterTasksSelect.addEventListener('change', () => {
+        const filter = filterTasksSelect.value;
         let filteredTasks = tasks;
-        if (filterTasksSelect.value === 'completed') {
+
+        if (filter === 'completed') {
             filteredTasks = tasks.filter(task => task.completed);
-        } else if (filterTasksSelect.value === 'uncompleted') {
+        } else if (filter === 'uncompleted') {
             filteredTasks = tasks.filter(task => !task.completed);
         }
+
         renderTasks(filteredTasks);
     });
 
     themeToggle.addEventListener('change', () => {
         document.body.classList.toggle('dark-mode', themeToggle.checked);
-        localStorage.setItem('darkMode', JSON.stringify(themeToggle.checked));
     });
 
-    // Load dark mode preference
-    const darkMode = JSON.parse(localStorage.getItem('darkMode'));
-    if (darkMode) {
-        themeToggle.checked = true;
-        document.body.classList.add('dark-mode');
-    }
+    clearAllButton.addEventListener('click', () => {
+        clearPopup.classList.add('show');
+    });
+
+    confirmClearButton.addEventListener('click', () => {
+        tasks = [];
+        saveTasks();
+        renderTasks(tasks);
+        clearPopup.classList.remove('show');
+    });
+
+    cancelClearButton.addEventListener('click', () => {
+        clearPopup.classList.remove('show');
+    });
+
+    confirmDeleteButton.addEventListener('click', () => {
+        tasks = tasks.filter(task => task.id !== deleteTaskId);
+        saveTasks();
+        renderTasks(tasks);
+        deletePopup.classList.remove('show');
+    });
+
+    cancelDeleteButton.addEventListener('click', () => {
+        deletePopup.classList.remove('show');
+    });
 
     renderTasks(tasks);
 });
